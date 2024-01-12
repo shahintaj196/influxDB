@@ -9,6 +9,7 @@ load_dotenv()
 token  = os.getenv('TOKEN')
 org    = os.getenv('ORG')
 bucket = os.getenv('BUCKET')
+client = InfluxDBClient(url="http://localhost:8086", token=token)
 
 ## Source :https://www.influxdata.com/blog/start-python-influxdb/
 

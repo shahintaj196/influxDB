@@ -9,6 +9,7 @@ load_dotenv()
 token  = os.getenv('TOKEN')
 org    = os.getenv('ORG')
 bucket = os.getenv('BUCKET')
+client = InfluxDBClient(url="http://localhost:8086", token=token)
 
 ## Source :https://www.influxdata.com/blog/start-python-influxdb/
 
@@ -37,3 +38,19 @@ class InfluxClient:
         start = "1970-01-01T00:00:00Z"
         stop = "2021-10-30T00:00:00Z"
         delete_api.delete(start, stop, f'_measurement="{measurement}"', bucket=self._bucket, org=self._org)
+
+
+IC = InfluxClient(token,org,bucket)
+
+
+
+IC.write_data(["MSFT,stock=MSFT Open=62.79,High=63.84,Low=62.13"])
+
+
+
+query2 = 'from(bucket: "tse")\
+|> range(start: 1633124983)\
+|> filter(fn: (r) => r._field == "High")\
+|> filter(fn: (r) => r._measurement == "MSFT_2021-10-29")'
+
+IC.query_data(query2)

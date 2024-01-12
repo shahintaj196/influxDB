@@ -9,8 +9,8 @@ load_dotenv()
 token  = os.getenv('TOKEN')
 org    = os.getenv('ORG')
 bucket = os.getenv('BUCKET')
+client = InfluxDBClient(url="http://localhost:8086", token=token)
 
-## Source :https://www.influxdata.com/blog/start-python-influxdb/
 
 class InfluxClient:
     def __init__(self,token,org,bucket): 
@@ -21,7 +21,6 @@ class InfluxClient:
     def write_data(self,data,write_option=SYNCHRONOUS):
         write_api = self._client.write_api(write_option)
         write_api.write(self._bucket, self._org , data,write_precision='s')
-    
     def query_data(self,query):
         query_api = self._client.query_api()
         result = query_api.query(org=self._org, query=query)
@@ -37,3 +36,36 @@ class InfluxClient:
         start = "1970-01-01T00:00:00Z"
         stop = "2021-10-30T00:00:00Z"
         delete_api.delete(start, stop, f'_measurement="{measurement}"', bucket=self._bucket, org=self._org)
+
+
+IC = InfluxClient(token,org,bucket)
+
+
+MSFT_file = open('FINANCE.csv')
+csvreader = csv.reader(MSFT_file)
+header = next(csvreader)
+rows = []
+
+for row in csvreader:
+        date,open,high,low = row[0],row[1],row[2],row[3]
+        line_protocol_string = ''
+        line_protocol_string+=f'MSFT_{date},'
+        line_protocol_string+=f'stock=MSFT '
+        line_protocol_string+=f'Open={open},High={high},Low={low} '
+        line_protocol_string+=str(int(datetime.strptime(date,'%Y-%m-%d').timestamp()))
+        rows.append(line_protocol_string)
+
+IC.write_data(rows)
+
+
+query1 = 'from(bucket: "TSETMC")\
+|> range(start: 1633124983)\
+|> filter(fn: (r) => r._field == "High")\
+|> filter(fn: (r) => r.stock == "MSFT")'
+IC.query_data(query1)
+query2 = 'from(bucket: "TSETMC")\
+|> range(start: 1633124983)\
+|> filter(fn: (r) => r._field == "High")\
+|> filter(fn: (r) => r._measurement == "MSFT_2021-10-29")'
+
+IC.query_data(query2)

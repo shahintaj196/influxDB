@@ -1,0 +1,5 @@
+load_dotenv()
+token  = os.getenv('TOKEN')
+org    = os.getenv('ORG')
+bucket = os.getenv('BUCKET')
+client = InfluxDBClient(url="http://localhost:8086", token=token)

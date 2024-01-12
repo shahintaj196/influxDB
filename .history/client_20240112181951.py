@@ -9,6 +9,7 @@ load_dotenv()
 token  = os.getenv('TOKEN')
 org    = os.getenv('ORG')
 bucket = os.getenv('BUCKET')
+client = InfluxDBClient(url="http://localhost:8086", token=token)
 
 ## Source :https://www.influxdata.com/blog/start-python-influxdb/
 
@@ -37,3 +38,4 @@ class InfluxClient:
         start = "1970-01-01T00:00:00Z"
         stop = "2021-10-30T00:00:00Z"
         delete_api.delete(start, stop, f'_measurement="{measurement}"', bucket=self._bucket, org=self._org)
+
