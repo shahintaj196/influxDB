@@ -6,6 +6,7 @@ from influxdb_client import InfluxDBClient, Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS, ASYNCHRONOUS
 
 load_dotenv()
+# You can generate a Token from the "Tokens Tab" in the UI
 token  = os.getenv('TOKEN')
 org    = os.getenv('ORG')
 bucket = os.getenv('BUCKET')

@@ -6,12 +6,14 @@ from influxdb_client import InfluxDBClient, Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS, ASYNCHRONOUS
 
 load_dotenv()
+# You can generate a Token from the "Tokens Tab" in the UI
 token  = os.getenv('TOKEN')
 org    = os.getenv('ORG')
 bucket = os.getenv('BUCKET')
 client = InfluxDBClient(url="http://localhost:8086", token=token)
 
 
+# Data Write Method 1
 class InfluxClient:
     def __init__(self,_token,_org,_bucket): 
         self._org    = _org 
